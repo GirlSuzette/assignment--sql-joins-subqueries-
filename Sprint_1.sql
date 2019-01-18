@@ -178,10 +178,64 @@ ORDER BY I.Total DESC
 
 -- Which country's customers spent the most?
 
--- Provide a query that shows the most purchased track of 2013.
+SELECT 
+BillingCountry, 
+SUM(Total) AS "Total Sales" 
+FROM Invoice 
+GROUP BY BillingCountry 
+ORDER BY SUM(Total) DESC
 
+-- Provide a query that shows the most purchased track of 2013.
+SELECT 
+T.TrackId, 
+T.Name,
+COUNT(IL.TrackId) AS "Times_Purchased"
+FROM Track T
+INNER JOIN InvoiceLine IL
+ON T.TrackId = IL.TrackId 
+INNER JOIN Invoice I
+ON I.InvoiceId = IL.InvoiceId 
+WHERE I.InvoiceDate 
+LIKE '%2013%' 
+GROUP BY T.TrackId 
+ORDER BY COUNT(IL.TrackId) DESC
 -- Provide a query that shows the top 5 most purchased tracks over all.
+SELECT 
+T.TrackId,
+T.Name,  
+COUNT(IL.TrackId) AS "Times Purchased" 
+FROM Track T
+INNER JOIN InvoiceLine IL
+ON  T.TrackId = IL.TrackId
+INNER JOIN Invoice I
+ON IL.InvoiceId = I.InvoiceId 
+GROUP BY T.TrackId 
+ORDER BY COUNT(IL.TrackId) DESC 
+LIMIT 5
 
 -- Provide a query that shows the top 3 best selling artists.
+SELECT
+A.Name,
+SUM(IV.UnitPrice) AS "Total_Price"
+FROM Track T
+INNER JOIN InvoiceLine Iv
+ON T.TrackId = Iv.TrackId
+INNER JOIN Invoice I
+ON IV.InvoiceId = I.InvoiceId
+INNER JOIN Album AB
+ON T.AlbumId = AB.AlbumId
+INNER JOIN Artist A
+ON AB.ArtistId	= A.ArtistId	
+GROUP BY A.Name 
+ORDER BY SUM(IV.UnitPrice)DESC 
+LIMIT 3
 
 -- Provide a query that shows the most purchased Media Type.
+SELECT 
+M.Name,
+MAX(InvoiceLineId) 
+FROM MediaType M
+INNER JOIN Track T
+ON M.MediaTypeId = T.MediaTypeId 
+INNER JOIN InvoiceLine IV
+ON T.TrackId = IV.TrackId

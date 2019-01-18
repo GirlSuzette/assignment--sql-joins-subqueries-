@@ -56,3 +56,12 @@ ON T.TrackId = PL.TrackId
 INNER JOIN Playlist P
 ON PL.PlaylistId = P.PlaylistId
 -- Get all Track Names and Album Titles that are the genre "Alternative".
+SELECT 
+T.Name, 
+A.Title,
+FROM Track T
+INNER JOIN Album A 
+ON T.AlbumId = A.AlbumId
+INNER JOIN Genre G 
+ON T.GenreId = G.GenreId
+WHERE G.Name = "Alternative";
