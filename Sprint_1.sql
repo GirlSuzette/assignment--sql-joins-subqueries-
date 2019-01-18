@@ -126,12 +126,55 @@ INNER JOIN Invoice I
 ON C.CustomerId = I.CustomerId
 GROUP BY E.EmployeeId
 -- Which sales agent made the most in sales in 2009?
+SELECT [Sales Agent], MAX([Total Sales]) 
+FROM ( SELECT Employee.FirstName || ' ' || Employee.LastName AS [Sales Agent],
+ SUM(Invoice.Total) AS [Total Sales] 
+ FROM Employee 
+ INNER JOIN Customer ON Customer.SupportRepId = Employee.EmployeeId 
+ INNER JOIN Invoice ON Invoice.CustomerId = Customer.CustomerId WHERE Invoice.InvoiceDate LIKE '%2009%' GROUP BY Employee.LastName )
 
 -- Which sales agent made the most in sales over all?
+SELECT 
+E.FirstName,
+E.LastName,
+MAX(I.Total) AS "Total_Sales"
+FROM Employee E
+INNER JOIN Customer C
+ON E.EmployeeId	= C.SupportRepId
+INNER JOIN Invoice I
+ON C.CustomerId = I.CustomerId
+WHERE strftime('%Y', I.InvoiceDate) IN ('2009')
+GROUP BY E.employeeId
 
 -- Provide a query that shows the count of customers assigned to each sales agent.
+SELECT 
+E.FirstName, 
+E.LastName,
+COUNT(C.SupportRepId) AS "Total_Customers"
+FROM Customer C
+INNER JOIN Employee E 
+ON C.SupportRepId E.EmployeeId
+INNER JOIN Invoice I 
+ON  C.CustomerId = I.CustomerId
+GROUP BY E.employeeId;
+
+SELECT 
+CONCAT(E.FirstName, " ", E.LastName) AS "Full_Name",
+COUNT(C.SupportRepId) AS "Total_Customers"
+FROM Customer C
+INNER JOIN Employee E 
+ON C.SupportRepId E.EmployeeId
+INNER JOIN Invoice I 
+ON  C.CustomerId = I.CustomerId
+GROUP BY E.employeeId;
 
 -- Provide a query that shows the total sales per country.
+SELECT 
+I.BillingCountry,
+SUM(I.Total) AS "Total_Sales"
+FROM Invoice I
+GROUP BY I.BillingCountry 
+ORDER BY I.Total DESC
 
 -- Which country's customers spent the most?
 
